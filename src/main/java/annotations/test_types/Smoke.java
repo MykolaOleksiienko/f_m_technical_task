@@ -1,4 +1,4 @@
-package annotations;
+package annotations.test_types;
 
 import org.junit.jupiter.api.Tag;
 

@@ -1,0 +1,204 @@
+image: gradle:7.6-jdk17
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  HEADLESS: "true"
+  # Default values - can be overridden in job variables
+  BROWSER_TYPE: "chromium"
+  VIEWPORT_WIDTH: "1920"
+  VIEWPORT_HEIGHT: "1080"
+  # Environment for envConfig.groovy (dev/prod)
+  ENV: "dev"
+  # UI_TAG for test filtering (Smoke, Regression, or empty for all tests)
+  UI_TAG: ""
+  # Thread count for parallel test execution
+  THREAD_COUNT: "1"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .gradle/
+    - ~/.gradle/caches/
+    - ~/.cache/ms-playwright/
+
+before_script:
+  - chmod +x ./gradlew
+  - ./gradlew --version
+  # Playwright browsers will be auto-installed by driver-bundle on first test run
+
+stages:
+  - test
+  - report
+
+# Smoke tests - quick validation with default browser and viewport
+smoke-tests:
+  stage: test
+  variables:
+    BROWSER_TYPE: "chromium"
+    VIEWPORT_WIDTH: "1920"
+    VIEWPORT_HEIGHT: "1080"
+  script:
+    - ./gradlew clean test -Penv=$ENV --tests "*Smoke*" || true
+  artifacts:
+    when: always
+    paths:
+      - build/reports/tests/
+      - allure-results/
+    expire_in: 7 days
+  only:
+    - merge_requests
+    - main
+    - master
+
+# Regression tests - Chromium Desktop (for demonstration)
+test:chromium:desktop:
+  stage: test
+  variables:
+    BROWSER_TYPE: "chromium"
+    VIEWPORT_WIDTH: "1920"
+    VIEWPORT_HEIGHT: "1080"
+  script:
+    - ./gradlew clean test -Penv=$ENV || true
+  artifacts:
+    when: always
+    paths:
+      - build/reports/tests/
+      - allure-results/
+    expire_in: 30 days
+  only:
+    - merge_requests
+    - main
+    - master
+
+# Parameterized manual job - allows custom configuration via GitLab CI/CD variables
+# Usage: Set variables UI_TAG, BROWSER, RESOLUTION, ENVIRONMENT before running
+# UI_TAG: Smoke, Regression, or leave empty for all tests
+# BROWSER: chromium, firefox, safari
+# RESOLUTION: desktop (1920x1080), tablet (768x1024), mobile (375x667), or custom format "WIDTHxHEIGHT"
+# ENVIRONMENT: dev, prod
+parameterized-tests:
+  stage: test
+  when: manual
+  before_script:
+    - chmod +x ./gradlew
+    - ./gradlew --version
+    # Parse RESOLUTION parameter
+    - |
+      if [ -z "$RESOLUTION" ]; then
+        RESOLUTION="desktop"
+      fi
+      case "$RESOLUTION" in
+        desktop)
+          export VIEWPORT_WIDTH="1920"
+          export VIEWPORT_HEIGHT="1080"
+          ;;
+        tablet)
+          export VIEWPORT_WIDTH="768"
+          export VIEWPORT_HEIGHT="1024"
+          ;;
+        mobile)
+          export VIEWPORT_WIDTH="375"
+          export VIEWPORT_HEIGHT="667"
+          ;;
+        *)
+          # Custom resolution format: "1920x1080"
+          if echo "$RESOLUTION" | grep -qE '^[0-9]+x[0-9]+$'; then
+            export VIEWPORT_WIDTH=$(echo "$RESOLUTION" | cut -d'x' -f1)
+            export VIEWPORT_HEIGHT=$(echo "$RESOLUTION" | cut -d'x' -f2)
+          else
+            echo "Invalid RESOLUTION format. Use: desktop, tablet, mobile, or WIDTHxHEIGHT (e.g., 1920x1080)"
+            exit 1
+          fi
+          ;;
+      esac
+    # Set BROWSER_TYPE based on BROWSER parameter
+    - |
+      if [ -z "$BROWSER" ]; then
+        export BROWSER_TYPE="chromium"
+      else
+        case "$BROWSER" in
+          chromium|firefox)
+            export BROWSER_TYPE="$BROWSER"
+            ;;
+          safari)
+            export BROWSER_TYPE="safari"
+            ;;
+          *)
+            echo "Invalid BROWSER. Use: chromium, firefox, or safari"
+            exit 1
+            ;;
+        esac
+      fi
+    # Set ENV based on ENVIRONMENT parameter
+    - |
+      if [ -z "$ENVIRONMENT" ]; then
+        export ENV="dev"
+      else
+        case "$ENVIRONMENT" in
+          dev|prod)
+            export ENV="$ENVIRONMENT"
+            ;;
+          *)
+            echo "Invalid ENVIRONMENT. Use: dev or prod"
+            exit 1
+            ;;
+        esac
+      fi
+    # Set THREAD_COUNT if provided
+    - |
+      if [ -z "$THREAD_COUNT" ]; then
+        export THREAD_COUNT="1"
+      fi
+    # Display test configuration
+    - |
+      echo "=== Test Configuration ==="
+      echo "UI_TAG: ${UI_TAG:-all tests}"
+      echo "BROWSER: ${BROWSER_TYPE}"
+      echo "RESOLUTION: ${VIEWPORT_WIDTH}x${VIEWPORT_HEIGHT}"
+      echo "ENVIRONMENT: ${ENV}"
+      echo "THREAD_COUNT: ${THREAD_COUNT}"
+      echo "========================"
+  script:
+    - ./gradlew clean test -Penv=$ENV || true
+  artifacts:
+    when: always
+    paths:
+      - build/reports/tests/
+      - allure-results/
+    expire_in: 30 days
+  only:
+    - merge_requests
+    - main
+    - master
+    - branches
+
+# Generate Allure report from test results
+generate-allure-report:
+  stage: report
+  image: java:17
+  dependencies:
+    - test:chromium:desktop
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq wget unzip
+    - |
+      if [ ! -f allure-2.24.0.zip ]; then
+        wget -q https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.zip
+        unzip -q allure-2.24.0.zip
+      fi
+  script:
+    - |
+      if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
+        ./allure-2.24.0/bin/allure generate allure-results -o allure-report --clean || true
+      else
+        echo "No allure-results found, skipping report generation"
+      fi
+  artifacts:
+    when: always
+    paths:
+      - allure-report/
+    expire_in: 30 days
+  only:
+    - merge_requests
+    - main
+    - master
+

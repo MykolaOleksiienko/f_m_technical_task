@@ -1,100 +1,94 @@
-package automation.shared.library.core.base_config.configuration_execution;
+package core.base_config.configuration_execution;
 
-import automation.shared.library.core.base_config.annotations.RunBrowser;
-import automation.shared.library.core.base_config.browser_config.BrowserName;
-import automation.shared.library.core.base_config.common.ConfigParams;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.BrowserType.LaunchOptions;
 import com.microsoft.playwright.Playwright;
+import core.base_config.common.ConfigParams;
+import enums.config.BrowserType;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Logger;
+import java.util.List;
 
-import static automation.shared.library.core.base_config.browser_config.BrowserArguments.CONSOLE_MESSAGES;
-import static automation.shared.library.core.base_config.browser_config.BrowserArguments.DISABLE_SANDBOX;
-import static automation.shared.library.core.base_config.browser_config.BrowserArguments.NO_SANDBOX;
-import static automation.shared.library.helpers.EnvProperties.getUrlBackOffice;
-import static automation.shared.library.helpers.EnvProperties.getUrlWeb;
-import static automation.shared.library.helpers.EnvProperties.isHeadlessMode;
-import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
+import static core.EnvProperties.getBrowserType;
+import static core.EnvProperties.getUrlWeb;
+import static core.base_config.browser_config.BrowserArguments.*;
+import static core.EnvProperties.isHeadlessMode;
 
-public class ConfigurationExecution extends AppConfigInit implements BeforeAllCallback, AfterAllCallback {
-    private static final Logger logger = Logger.getLogger(ConfigurationExecution.class.getName());
-    private static final String ENV_BROWSER_NAME = "browser";
-    public static final ThreadLocal<ConfigParams> LAUNCH_CONFIG = new ThreadLocal<>();
+public class ConfigurationExecution implements BeforeAllCallback, AfterAllCallback {
+    private static final ThreadLocal<ConfigParams> LAUNCH_CONFIG = new ThreadLocal<>();
+    private static final ThreadLocal<Playwright> PLAYWRIGHT = new ThreadLocal<>();
+    private static final ThreadLocal<Browser> BROWSER = new ThreadLocal<>();
 
-    private Playwright playwright;
-    private Browser browser;
-
-    public static void initForThread() {
-        ConfigParams configParams = new ConfigParams();
-        configParams.setMainAppUrl(getUrlWeb());
-        configParams.setBackOfficeUrl(getUrlBackOffice());
-        LAUNCH_CONFIG.set(configParams);
+    public static ConfigParams getLaunchConfig() {
+        return LAUNCH_CONFIG.get();
     }
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
-        super.beforeAll(extensionContext);
-        final var remoteBrowserName = System.getenv(ENV_BROWSER_NAME);
-        if (ofNullable(remoteBrowserName).isPresent()) {
-            browser = runBrowser(getRemoteBrowserName(remoteBrowserName));
-        } else {
-            final var annotation = extensionContext.getRequiredTestClass().getAnnotation(RunBrowser.class);
-            if (ofNullable(annotation).isPresent()) {
-                final var browserName = annotation.browserName();
-                browser = runBrowser(browserName);
-            } else {
-                throw new RuntimeException("RunBrowser annotation was not found");
-            }
-        }
+        ConfigParams configParams = new ConfigParams();
+        configParams.setMainAppUrl(getUrlWeb());
+        LAUNCH_CONFIG.set(configParams);
 
-        LAUNCH_CONFIG.get().setBrowser(browser);
-        logger.info(format("'Browser: %s with version: %s ' is starting to execute!",
-                browser.browserType().name(), browser.version()));
+        Playwright playwrightInstance = Playwright.create();
+        PLAYWRIGHT.set(playwrightInstance);
+        
+        Browser browserInstance = launchBrowser(getBrowserType());
+        BROWSER.set(browserInstance);
+        
+        configParams.setBrowser(browserInstance);
     }
 
     @Override
     public void afterAll(ExtensionContext extensionContext) {
-        LAUNCH_CONFIG.get()
-                .getBrowser()
-                .contexts()
-                .stream()
-                .filter(Objects::nonNull)
-                .forEach(BrowserContext::close);
-
-        super.afterAll(extensionContext);
-        browser.close();
-        playwright.close();
+        Browser browserInstance = BROWSER.get();
+        if (browserInstance != null) {
+            browserInstance.contexts().forEach(BrowserContext::close);
+            browserInstance.close();
+            BROWSER.remove();
+        }
+        
+        Playwright playwrightInstance = PLAYWRIGHT.get();
+        if (playwrightInstance != null) {
+            playwrightInstance.close();
+            PLAYWRIGHT.remove();
+        }
+        
+        LAUNCH_CONFIG.remove();
     }
 
-    // Browser name have to be set as Enum value: browser=SAFARI or CHROMIUM
-    private BrowserName getRemoteBrowserName(String name) {
-        return Optional.of(BrowserName.valueOf(name))
-                .orElseThrow(() -> new RuntimeException(format("Browser with Name: '%s' was not found on CI. " +
-                        "Re-check correct browser name or exiting in enum BrowserName", name)));
-    }
+    private Browser launchBrowser(BrowserType browserType) {
+        Playwright playwrightInstance = PLAYWRIGHT.get();
+        LaunchOptions options = new LaunchOptions()
+                .setHeadless(isHeadlessMode())
+                .setArgs(getBrowserArgs(browserType));
 
-    private Browser runBrowser(BrowserName browserName) {
-        playwright = Playwright.create();
-        final var headless = isHeadlessMode();
-        return switch (browserName) {
-            case CHROMIUM -> playwright
-                    .chromium()
-                    .launch(new BrowserType.LaunchOptions()
-                            .setArgs(Arrays.asList(DISABLE_SANDBOX.getValue(), NO_SANDBOX.getValue(), CONSOLE_MESSAGES.getValue()))
-                            .setHeadless(headless));
-
-            case SAFARI -> playwright
-                    .webkit()
-                    .launch(new BrowserType.LaunchOptions().setHeadless(headless));
+        return switch (browserType) {
+            case CHROMIUM -> playwrightInstance.chromium().launch(options);
+            case FIREFOX -> playwrightInstance.firefox().launch(options);
+            case SAFARI -> playwrightInstance.webkit().launch(options);
         };
+    }
+
+    private List<String> getBrowserArgs(BrowserType browserType) {
+        // Common args for all browsers
+        List<String> commonArgs = Arrays.asList(
+                DISABLE_SANDBOX.getValue(),
+                NO_SANDBOX.getValue()
+        );
+
+        // Add browser-specific args if needed
+        if (browserType == BrowserType.CHROMIUM) {
+            return Arrays.asList(
+                    DISABLE_SANDBOX.getValue(),
+                    NO_SANDBOX.getValue(),
+                    CONSOLE_MESSAGES.getValue()
+            );
+        }
+
+        return commonArgs;
     }
 }

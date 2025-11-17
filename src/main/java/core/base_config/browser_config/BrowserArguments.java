@@ -1,4 +1,4 @@
-package automation.shared.library.core.base_config.browser_config;
+package core.base_config.browser_config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

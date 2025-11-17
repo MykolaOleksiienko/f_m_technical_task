@@ -1,4 +1,4 @@
-package annotations;
+package annotations.functional;
 
 import org.junit.jupiter.api.Tag;
 

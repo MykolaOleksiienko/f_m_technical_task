@@ -1,4 +1,4 @@
-package core.common;
+package core.listeners;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -12,7 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static core.base_config.configuration_execution.ConfigurationExecution.LAUNCH_CONFIG;
+import static core.base_config.browser_config.BrowserContextHolder.remove;
+import static core.base_config.configuration_execution.ConfigurationExecution.getLaunchConfig;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
@@ -24,10 +25,14 @@ public class ListenerTestExecution implements AfterEachCallback {
         final var requiredTestInstance = context.getRequiredTestInstance();
         final var method = context.getRequiredTestMethod();
         final var nameScreen = format("Class: %s, Test: %s", requiredTestInstance.getClass().getSimpleName(), method.getName());
-        if (context.getExecutionException().isPresent()) {
-            makeScreenShot(LAUNCH_CONFIG.getBrowser(), nameScreen);
+        var launchConfig = getLaunchConfig();
+        if (launchConfig != null && context.getExecutionException().isPresent()) {
+            makeScreenShot(launchConfig.getBrowser(), nameScreen);
         }
-        closeBrowserContexts(LAUNCH_CONFIG.getBrowser());
+        if (launchConfig != null) {
+            closeBrowserContexts(launchConfig.getBrowser());
+        }
+        remove();
     }
 
     @Step("ScreenShot For Failed Test: Browser: '{0}' Name Screenshot: '{1}'")

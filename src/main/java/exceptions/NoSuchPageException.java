@@ -1,4 +1,4 @@
-package automation.shared.library.exceptions;
+package exceptions;
 
 public class NoSuchPageException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package annotations;
+package annotations.common;
 
 import core.base_config.configuration_execution.ConfigurationExecution;
 import org.junit.jupiter.api.extension.ExtendWith;

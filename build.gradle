@@ -1,20 +1,171 @@
 plugins {
-    id("java")
+    id 'java'
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = 'com.automation-tech-task'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()
 }
 
+def playwrightVersion = '1.56.0'
+def junit5Version = '5.10.0'
+def junitPlatformVersion = '1.10.0'
+def assertjCoreVersion = '3.24.2'
+def apacheCommonsLang3Version = '3.18.0'
+def allureJunit5Version = '2.24.0'
+def lombokVersion = '1.18.30'
+
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // JUnit 5
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit5Version}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junit5Version}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junit5Version}"
+    implementation "org.junit.platform:junit-platform-engine:${junitPlatformVersion}"
+    testImplementation "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
+    implementation "org.junit.jupiter:junit-jupiter-api:${junit5Version}"
+    
+    // AssertJ
+    implementation "org.assertj:assertj-core:${assertjCoreVersion}"
+    
+    // Apache Commons Lang3
+    implementation "org.apache.commons:commons-lang3:${apacheCommonsLang3Version}"
+    
+    // Allure
+    implementation "io.qameta.allure:allure-junit5:${allureJunit5Version}"
+    testImplementation "io.qameta.allure:allure-junit5:${allureJunit5Version}"
+    
+    // Playwright
+    implementation "com.microsoft.playwright:playwright:${playwrightVersion}"
+    testImplementation "com.microsoft.playwright:driver-bundle:${playwrightVersion}"
+    
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
+
+// Load configuration from envConfig.groovy
+def loadEnvConfig() {
+    def configFile = file('envConfig.groovy')
+    if (configFile.exists()) {
+        def environment = project.hasProperty('env') ? project.property('env') : 'dev'
+        def config = new ConfigSlurper(environment as String).parse(configFile.toURL())
+        return config
+    }
+    return null
+}
+
+def envConfig = loadEnvConfig()
 
 tasks.test {
     useJUnitPlatform()
+    
+    // Test output configuration
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = false
+    }
+
+    // URL configuration from envConfig.groovy
+    def urlWeb = 'http://localhost:8080'
+    if (envConfig != null) {
+        def environment = project.hasProperty('env') ? project.property('env') : 'dev'
+        if (environment == 'dev' && envConfig.url) {
+            urlWeb = envConfig.url
+        } else if (environment == 'prod' && envConfig.url) {
+            urlWeb = envConfig.url
+        }
+    }
+    
+    systemProperty "url_web", urlWeb
+    
+    // Pass environment variables to tests
+    systemProperty "BROWSER_TYPE", System.getenv("BROWSER_TYPE") ?: "chromium"
+    systemProperty "VIEWPORT_WIDTH", System.getenv("VIEWPORT_WIDTH") ?: "1920"
+    systemProperty "VIEWPORT_HEIGHT", System.getenv("VIEWPORT_HEIGHT") ?: "1080"
+    systemProperty "HEADLESS", System.getenv("HEADLESS") ?: "false"
+    systemProperty "THREAD_COUNT", System.getenv("THREAD_COUNT") ?: "1"
+    
+    // JUnit Platform tag filtering (for UI_TAG parameter)
+    def uiTag = System.getenv("UI_TAG")
+    if (uiTag != null && !uiTag.isEmpty()) {
+        systemProperty "junit.jupiter.tags.include", uiTag
+    }
+    
+    // Allure configuration - results directory
+    systemProperty "allure.results.directory", "allure-results"
+    
+    // Fail build on test failures (can be overridden in CI)
+    ignoreFailures = project.hasProperty('ignoreTestFailures') ? project.property('ignoreTestFailures').toBoolean() : false
+    
+    // Reports configuration
+    reports {
+        html.required = true
+        junitXml.required = true
+    }
+}
+
+// Task to generate Allure report (without running tests)
+task allureReport(type: Exec) {
+    group = 'reporting'
+    description = 'Generate Allure report from existing results'
+    
+    def allureResultsDir = file('allure-results')
+    def allureReportDir = file('build/allure-report')
+    
+    doFirst {
+        if (!allureResultsDir.exists() || allureResultsDir.listFiles().length == 0) {
+            throw new GradleException("No Allure results found. Run tests first with: ./gradlew test")
+        }
+    }
+    
+    commandLine 'allure', 'generate', allureResultsDir.absolutePath, '-o', allureReportDir.absolutePath, '--clean'
+    
+    onlyIf {
+        // Check if allure command is available
+        try {
+            def process = 'allure --version'.execute()
+            process.waitFor()
+            process.exitValue() == 0
+        } catch (Exception e) {
+            logger.warn("Allure CLI not found. Install it or use Docker image with Allure.")
+            false
+        }
+    }
+}
+
+// Task to run tests and generate Allure report
+task testAndGenerateReport {
+    group = 'reporting'
+    description = 'Run tests and generate Allure report'
+    dependsOn test
+    finalizedBy allureReport
+}
+
+// Task to serve Allure report locally
+task allureServe(type: Exec) {
+    group = 'reporting'
+    description = 'Serve Allure report locally'
+    dependsOn allureReport
+    
+    def allureReportDir = file('build/allure-report')
+    
+    commandLine 'allure', 'open', allureReportDir.absolutePath
+    
+    onlyIf {
+        try {
+            def process = 'allure --version'.execute()
+            process.waitFor()
+            process.exitValue() == 0
+        } catch (Exception e) {
+            false
+        }
+    }
 }

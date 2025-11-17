@@ -1,10 +1,9 @@
-package pages.login_page;
+package pages.login;
 
 import annotations.common.URI;
 import assertions.CustomAssertions;
 import enums.ValidationErrorMessage;
 import io.qameta.allure.Step;
-import org.apache.commons.lang3.StringUtils;
 import pages.AbstractBaseSteps;
 
 import static assertions.CustomAssertions.assertThatElementIsVisible;
@@ -17,11 +16,11 @@ public class LoginPage extends AbstractBaseSteps {
     private static final String usernameField = getLocatorByDataAttribute("customer-username-input");
     private static final String passwordField = getLocatorByDataAttribute("customer-password-input");
     private static final String loginButton = getLocatorByDataAttribute("customer-login-button");
-    private static final String usernameFieldError = getLocatorByDataAttribute("customer-username-error");
-    private static final String passwordFieldError = getLocatorByDataAttribute("customer-password-error");
+    private static final String loginFormError = "//section[@class='login']//div[contains(@class,'alert-danger')]";
+
 
     @Step("Fill username value: '{0}'")
-    public LoginPage fillUserName(String value) {
+    public LoginPage fillUsername(String value) {
         fill(usernameField, value);
         return this;
     }
@@ -38,16 +37,9 @@ public class LoginPage extends AbstractBaseSteps {
         return this;
     }
 
-    @Step("Verify username error message: '{0}'")
-    public LoginPage verifyUsernameErrorMessage(ValidationErrorMessage expectedErrorMessage) {
-        CustomAssertions.assertThatElementTextEqualTo(waitFor(usernameFieldError), expectedErrorMessage.getValue(), "Username Error Message");
-        return this;
-    }
-
-    @Step("Verify password error message: '{0}'")
-    public LoginPage verifyPasswordErrorMessage(ValidationErrorMessage expectedErrorMessage) {
-        CustomAssertions.assertThatElementTextEqualTo(waitFor(passwordFieldError), expectedErrorMessage.getValue(), "Password Error Message");
-        return this;
+    @Step("Verify login form error message: '{0}'")
+    public void verifyLoginFormErrorMessage(ValidationErrorMessage expectedErrorMessage) {
+        CustomAssertions.assertThatElementInnerTextEqualTo(waitFor(loginFormError), expectedErrorMessage.getValue(), "Login Error Message");
     }
 
     @Step("Verify login page UI")
@@ -72,9 +64,8 @@ public class LoginPage extends AbstractBaseSteps {
     }
 
     @Step("Verify password field is empty")
-    public LoginPage verifyPasswordFieldIsEmpty() {
+    public void verifyPasswordFieldIsEmpty() {
         CustomAssertions.assertThatInputFieldElementValueEqualToValue(waitForPresent(passwordField), EMPTY, "Password");
-        return this;
     }
 
     @Step("Clear username field")
