@@ -4,50 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="53b00b6d-579c-40f2-ab9e-2e092b6e9c4e" name="Changes" comment="">
+    <list default="true" id="53b00b6d-579c-40f2-ab9e-2e092b6e9c4e" name="Changes" comment="Initial commit: Test automation framework">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/envConfig.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/envConfig.groovy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotations/common/RunBrowser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotations/common/RunBrowser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotations/common/URI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotations/common/URI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotations/functional/Feedback.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotations/functional/Feedback.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotations/functional/Login.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotations/functional/Login.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotations/functional/MainPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotations/functional/MainPage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotations/test_types/Regression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotations/test_types/Regression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/annotations/test_types/Smoke.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/annotations/test_types/Smoke.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/assertions/CustomAssertions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/assertions/CustomAssertions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/CustomStrategyParallelism.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/EnvProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/EnvProperties.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/IPageHelper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/browser_config/BrowserArguments.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/base_config/browser_config/BrowserArguments.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/browser_config/BrowserName.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/common/ConfigParams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/base_config/common/ConfigParams.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/common/ThreadLoggingListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/base_config/common/ThreadLoggingListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/configuration_execution/ApiConfigurationExecution.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/configuration_execution/AppConfigInit.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/configuration_execution/ConfigurationExecution.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/base_config/configuration_execution/ConfigurationExecution.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/base_config/configuration_execution/CustomStrategyParallelism.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/base_config/configuration_execution/CustomStrategyParallelism.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/listeners/ListenerTestExecution.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/listeners/ListenerTestExecution.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/enums/SiteUrl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/enums/ValidationErrorMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/enums/ValidationErrorMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/enums/config/BrowserType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/enums/config/BrowserType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/enums/config/ViewportPreset.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/enums/config/ViewportPreset.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/exceptions/ElementTimeoutException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/exceptions/ElementTimeoutException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/exceptions/NoSuchPageException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/exceptions/NoSuchPageException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/locator_templates/LocatorTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/locator_templates/LocatorTemplate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pages/AbstractBaseSteps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pages/AbstractBaseSteps.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pages/feedback/FeedbackPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pages/feedback/FeedbackPage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pages/login/LoginPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pages/login/LoginPage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pages/two_factor_verification/TwoFactorVerificationPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pages/two_factor_verification/TwoFactorVerificationPage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/DataGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/DataGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/WaitUtilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/WaitUtilities.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/junit-platform.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/junit-platform.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/logging-test.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/logging-test.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tests/BaseTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/tests/BaseTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tests/feedback/FeedbackTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/tests/feedback/FeedbackTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tests/login/LoginTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/tests/login/LoginTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,6 +66,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "MykolaOleksiienko"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/MykolaOleksiienko/f_m_technical_task.git",
+    "accountId": "165da332-95fd-45a6-a450-42c9de7c0f48"
+  }
+}]]></component>
   <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="$PROJECT_DIR$/../.gradle/wrapper/dists/gradle-8.14-bin/38aieal9i53h9rfe7vjup95b9/gradle-8.14" javaHome="/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home" gradleVersion="8.14">
     <option name="jvmArguments">
       <list>
@@ -125,33 +96,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Download Sources.executor": "Run",
-    "Gradle.LoginTests.executor": "Run",
-    "Gradle.LoginTests.loginTest.executor": "Run",
-    "Gradle.LoginTests.loginWithEmptyField.executor": "Run",
-    "Gradle.LoginTests.loginWithEmptyFields.executor": "Run",
-    "Gradle.LoginTests.loginWithEmptyUsernameOnly.executor": "Run",
-    "Gradle.LoginTests.successfulLoginWithPhoneNumber.executor": "Run",
-    "Gradle.LoginTests.successfulLoginWithValidCredentials.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHELLCHECK.PATH": "/Users/nick/Library/Application Support/JetBrains/IdeaIC2025.2/plugins/Shell Script/shellcheck",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/nick/f_m_technical_task/src/main/resources",
-    "onboarding.tips.debug.path": "/Users/nick/f_m_technical_task/src/main/java/org/example/Main.java",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.LoginTests.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.LoginTests.loginTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.LoginTests.loginWithEmptyField.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.LoginTests.loginWithEmptyFields.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.LoginTests.loginWithEmptyUsernameOnly.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.LoginTests.successfulLoginWithPhoneNumber.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.LoginTests.successfulLoginWithValidCredentials.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;/Users/nick/Library/Application Support/JetBrains/IdeaIC2025.2/plugins/Shell Script/shellcheck&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/nick/f_m_technical_task/src/main/resources&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/nick/f_m_technical_task/src/main/java/org/example/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources" />
@@ -303,6 +274,19 @@
       <option name="presentableId" value="Default" />
       <updated>1763211857032</updated>
     </task>
+    <task id="LOCAL-00001" summary="Initial commit: Test automation framework">
+      <option name="closed" value="true" />
+      <created>1763408144269</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763408144270</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit: Test automation framework" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial commit: Test automation framework" />
   </component>
 </project>
