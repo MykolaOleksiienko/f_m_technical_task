@@ -7,6 +7,7 @@ allure-results/
 .kotlin
 
 ### IntelliJ IDEA ###
+.idea/
 *.iws
 *.iml
 *.ipr
